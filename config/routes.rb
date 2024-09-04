@@ -16,7 +16,7 @@ Rails.application.routes.draw do
         get 'user' , to: 'auth#show'
       end
 
-      resources :wallets, only: [:index] do
+      resources :wallets, only: [:index, :create] do
         member do
           post 'transfer', to: 'wallets#transfer'
         end

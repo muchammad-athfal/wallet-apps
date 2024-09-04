@@ -11,6 +11,34 @@ class Api::V1::WalletsController < ApplicationController
     }, status: :ok
   end
 
+  # POST /api/wallets
+  def create
+    # Find the walletable entity (User, Team, Stock, etc.) based on the provided type and ID
+    walletable = find_walletable
+
+    if walletable.present?
+      @wallet = walletable.build_wallet(wallet_params)
+
+      if @wallet.save
+        render json: {
+          status: true,
+          message: 'Wallet created successfully',
+          data: @wallet
+        }, status: :ok
+      else
+        render json: {
+          status: false,
+          message: @wallet.errors.full_messages
+        }, status: :unprocessable_entity
+      end
+    else
+      render json: {
+        status: false,
+        message: 'Wallet Entity not found'
+      }, status: :unprocessable_entity
+    end
+  end
+
   # POST /api/wallets/:id/transfer
   def transfer
     target_wallet = Wallet.find_by(id: params[:target_wallet_id])
@@ -57,5 +85,17 @@ class Api::V1::WalletsController < ApplicationController
       status: false,
       message: 'Wallet not found'
     }, status: :not_found
+  end
+
+  # Method to find the walletable entity based on type and ID
+  def find_walletable
+    params[:walletable_type].constantize.find_by(id: params[:walletable_id])
+  rescue StandardError
+    nil
+  end
+
+  # Strong parameters to allow the required fields for creating a wallet
+  def wallet_params
+    params.permit(:balance)
   end
 end
