@@ -80,14 +80,32 @@ To get started with some initial data, you can run the provided seed script usin
 
 ### Authentication Endpoints
 
--   **Login**: Obtain a JWT token by providing valid user credentials.
--   **Logout**: Invalidate the current JWT token (this is typically managed by the client by deleting the token).
+-   **Login**
+
+    -   **Description**: Authenticate a user and generate a JWT token.
+    -   **Endpoint**: `POST /api/v1/auth/login`
+    -   **Request Parameters**:
+        -   `email` (string, required): The email address of the user.
+        -   `password` (string, required): The password of the user.
+    -   **Response**: Returns the JWT token.
+
+-   **Current User**
+
+    -   **Endpoint**: `GET /api/v1/auth/user`
+    -   **Description**: Retrieve the details of the current user.
+    -   **Response**: Returns the current user's details, including their name and email.
+
+-   **Logout**
+
+    -   **Endpoint**: `POST /api/v1/auth/logout`
+    -   **Description**: Log out the current user.
+    -   **Response**: Returns a success message.
 
 ### Wallet Endpoints
 
 -   **Create Wallet**
 
-    -   **Endpoint**: `POST /api/wallets`
+    -   **Endpoint**: `POST /api/v1/wallets`
     -   **Description**: Create a wallet for a specific entity.
     -   **Request Parameters**:
         -   `walletable_type` (string, required): The type of entity (e.g., "User", "Team", "Stock").
@@ -95,38 +113,41 @@ To get started with some initial data, you can run the provided seed script usin
         -   `balance` (decimal, optional): The initial balance for the wallet (default is 0.0).
     -   **Response**: Returns the created wallet's details, including its initial balance.
 
--   **View Wallet**
+-   **View Balance**
 
-    -   **Endpoint**: `GET /api/wallets/:id`
-    -   **Description**: Retrieve the balance and transaction history of a wallet.
+    -   **Endpoint**: `GET /api/v1/wallets`
+    -   **Description**: Retrieve the current balance for a specific wallet.
+    -   **Response**: Returns the current balance for the wallet.
+
+-   **Transer Wallet**
+    -   **Endpoint**: `GET /api/v1/wallets/:id/transfer`
+    -   **Description**: Transfer funds from one wallet to another.
     -   **Request Parameters**:
-        -   `id` (integer, required): The ID of the wallet.
-    -   **Response**: Returns the wallet's current balance and a list of transactions associated with it.
-
--   **List Wallets**
-    -   **Endpoint**: `GET /api/wallets`
-    -   **Description**: Retrieve a list of all wallets associated with the current user.
-    -   **Response**: Returns a list of wallets with their balances and basic information.
+        -   `id` (integer, required): The ID of the source wallet.
+        -   `target_wallet_id` (integer, required): The ID of the target wallet.
+        -   `amount` (decimal, required): The amount of money to be transferred.
+    -   **Response**: Returns a success message.
 
 ### Transaction Endpoints
 
 -   **Create Transaction**
 
-    -   **Endpoint**: `POST /api/transactions`
-    -   **Description**: Perform a credit or debit transaction between wallets.
+    -   **Endpoint**: `POST /api/v1/wallets/:wallet_id/transactions`
+    -   **Description**: Create a new transaction between two wallets.
     -   **Request Parameters**:
+        -   `wallet_id` (integer, required): The ID of the source wallet.
         -   `amount` (decimal, required): The amount of money to be transferred.
-        -   `source_wallet_id` (integer, optional): The ID of the source wallet (should be `nil` for credits).
         -   `target_wallet_id` (integer, optional): The ID of the target wallet (should be `nil` for debits).
         -   `type` (string, required): The type of transaction, either "Credit" or "Debit".
-    -   **Response**: Returns the details of the created transaction.
+    -   **Response**: Returns a success message.
 
 -   **View Transaction**
-    -   **Endpoint**: `GET /api/transactions/:id`
-    -   **Description**: Retrieve details of a specific transaction.
+
+    -   **Endpoint**: `GET /api/v1/wallets/:wallet_id/transactions`
+    -   **Description**: Retrieve the list of transaction for a specific wallet.
     -   **Request Parameters**:
-        -   `id` (integer, required): The ID of the transaction.
-    -   **Response**: Returns the transaction's details, including the amount, type, and involved wallets.
+        -   `wallet_id` (integer, required): The ID of the transaction.
+    -   **Response**: Returns the list of transactions for the wallet.
 
 ## Testing
 
