@@ -73,7 +73,7 @@ class Api::V1::TransactionsController < ApplicationController
   private
 
   def set_wallet
-    @wallet = current_user.wallets.find(params[:wallet_id])
+    @wallet = current_user.wallet
   rescue ActiveRecord::RecordNotFound
     render json: {
       status: false,

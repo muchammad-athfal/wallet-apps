@@ -1,19 +1,9 @@
 class Api::V1::WalletsController < ApplicationController
-  before_action :set_wallet, only: [:show, :transfer]
+  before_action :set_wallet, only: [:index, :transfer]
 
   # GET /api/wallets
   def index
     # List all wallets for the current user
-    @wallets = current_user.wallets
-    render json: {
-      status: true,
-      message: 'Data Retrieved Successfully',
-      data: @wallets
-    }, status: :ok
-  end
-
-  # GET /api/wallets/:id
-  def show
     render json: {
       status: true,
       message: 'Data Retrieved Successfully',
@@ -61,7 +51,7 @@ class Api::V1::WalletsController < ApplicationController
   private
 
   def set_wallet
-    @wallet = current_user.wallets.find(params[:id])
+    @wallet = current_user.wallet
   rescue ActiveRecord::RecordNotFound
     render json: {
       status: false,

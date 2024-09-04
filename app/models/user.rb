@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  has_many :wallets, as: :walletable, dependent: :destroy
+  has_one :wallet, as: :walletable, dependent: :destroy
   has_secure_password
 
   validates :email, presence: true, uniqueness: true
