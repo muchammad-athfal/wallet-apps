@@ -10,16 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_01_191223) do
-  create_table "entities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "type"
-    t.string "name"
+ActiveRecord::Schema[7.2].define(version: 2024_09_03_223125) do
+  create_table "blacklisted_tokens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "jti"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_blacklisted_tokens_on_jti", unique: true
   end
 
   create_table "stocks", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "symbol"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -31,10 +31,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_01_191223) do
   end
 
   create_table "transactions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "source_wallet_id", null: false
-    t.bigint "target_wallet_id", null: false
+    t.bigint "source_wallet_id"
+    t.bigint "target_wallet_id"
     t.decimal "amount", precision: 10
-    t.string "kind"
+    t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["source_wallet_id"], name: "index_transactions_on_source_wallet_id"
@@ -43,8 +43,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_01_191223) do
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
-    t.string "email"
-    t.string "password_digest"
+    t.string "email", null: false
+    t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -52,7 +52,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_01_191223) do
   create_table "wallets", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "walletable_type", null: false
     t.bigint "walletable_id", null: false
-    t.decimal "balance", precision: 10, default: "0"
+    t.decimal "balance", precision: 15, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["walletable_type", "walletable_id"], name: "index_wallets_on_walletable"

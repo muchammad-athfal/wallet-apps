@@ -1,14 +1,5 @@
 class Stock < ApplicationRecord
-  has_one :wallet, as: :walletable, dependent: :destroy
-  after_create :create_wallet
+  has_one :wallet, as: :walletable
 
-  def wallet_balance
-    wallet.balance
-  end
-
-  private
-  def create_wallet
-    return if wallet.present?
-    Wallet.create(walletable: self)
-  end
+  validates :name, presence: true, uniqueness: true
 end

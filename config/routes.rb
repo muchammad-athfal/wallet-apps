@@ -7,23 +7,21 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
   namespace :api do
     namespace :v1 do
       scope '/auth' do
         post 'login', to: 'auth#create'
-        get 'user' , to: 'users#show'
+        post 'logout', to: 'auth#destroy'
+        get 'user' , to: 'auth#show'
       end
 
-      scope '/wallets' do
-      end
+      resources :wallets, only: [:index, :show] do
+        member do
+          post 'transfer', to: 'wallets#transfer'
+        end
 
-      scope '/transactions' do
-      end
-
-      scope '/stocks' do
-        get 'stock/:symbol', to: 'stocks#show'
-        get 'stocks', to: 'stocks#index'
-        get 'stocks/all', to: 'stocks#all'
+        resources :transactions, only: [:index, :create]
       end
     end
   end

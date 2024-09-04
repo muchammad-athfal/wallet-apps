@@ -8,81 +8,57 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# Clear existing data
+Transaction.delete_all
+Wallet.delete_all
+User.delete_all
+Team.delete_all
+Stock.delete_all
+
 # Create Users
-user1 = User.create!(
-  email: 'user1@example.com',
-  password: 'password123'
-)
-
-user2 = User.create!(
-  email: 'user2@example.com',
-  password: 'password456'
-)
-
-# Create Teams
-team1 = Team.create!(
-  name: 'Development Team'
-)
-
-team2 = Team.create!(
-  name: 'Marketing Team'
-)
-
-# Create Stocks
-stock1 = Stock.create!(
-  symbol: 'AAPL'
-)
-
-stock2 = Stock.create!(
-  symbol: 'GOOGL'
-)
+user1 = User.create!(name: 'User 1',email: 'user1@example.com', password: 'password')
+user2 = User.create!(name: 'User 2',email: 'user2@example.com', password: 'password')
+user3 = User.create!(name: 'User 3',email: 'user3@example.com', password: 'password')
 
 # Create Wallets for Users
-user1_wallet = Wallet.create!(
-  walletable: user1,
-  balance: 1000.0
-)
+wallet1 = Wallet.create!(walletable: user1, balance: 1000.00)
+wallet2 = Wallet.create!(walletable: user2, balance: 500.00)
+wallet3 = Wallet.create!(walletable: user3, balance: 2000.00)
 
-user2_wallet = Wallet.create!(
-  walletable: user2,
-  balance: 500.0
-)
+# Create Teams and Wallets for Teams (Optional)
+team1 = Team.create!(name: 'Team A')
+team2 = Team.create!(name: 'Team B')
 
-# Create Wallets for Teams
-team1_wallet = Wallet.create!(
-  walletable: team1,
-  balance: 2000.0
-)
+team_wallet1 = Wallet.create!(walletable: team1, balance: 3000.00)
+team_wallet2 = Wallet.create!(walletable: team2, balance: 1500.00)
 
-team2_wallet = Wallet.create!(
-  walletable: team2,
-  balance: 1500.0
-)
+# Create Stocks and Wallets for Stocks (Optional)
+stock1 = Stock.create!(name: 'Stock X')
+stock2 = Stock.create!(name: 'Stock Y')
 
-# Create Wallets for Stocks
-stock1_wallet = Wallet.create!(
-  walletable: stock1,
-  balance: 3000.0
-)
+stock_wallet1 = Wallet.create!(walletable: stock1, balance: 10000.00)
+stock_wallet2 = Wallet.create!(walletable: stock2, balance: 20000.00)
 
-stock2_wallet = Wallet.create!(
-  walletable: stock2,
-  balance: 2500.0
-)
+# Create Transactions (Credits and Debits)
+# Adjusting for validation rules: Credit transactions should have a nil source_wallet
 
-# Optional: Create some example transactions
-Transaction.create!(
-  source_wallet: user1_wallet,
-  target_wallet: team1_wallet,
-  amount: 100.0,
-  kind: 'debit'
-)
+# Crediting wallet2 with 200 without a specific source (e.g., external deposit)
+Transaction.create!(amount: 200.00, target_wallet: wallet2, source_wallet: nil, type: 'Credit')
 
-Transaction.create!(
-  source_wallet: team2_wallet,
-  target_wallet: stock1_wallet,
-  amount: 200.0,
-  kind: 'debit'
-)
+# Crediting wallet3 with 50 without a specific source (e.g., external deposit)
+Transaction.create!(amount: 50.00, target_wallet: wallet3, source_wallet: nil, type: 'Credit')
 
-puts "Seed data created!"
+# Crediting wallet1 with 300 without a specific source (e.g., external deposit)
+Transaction.create!(amount: 300.00, target_wallet: wallet1, source_wallet: nil, type: 'Credit')
+
+# Debiting wallet1 with 100, moving funds to wallet2
+Transaction.create!(amount: 100.00, source_wallet: wallet1, target_wallet: nil, type: 'Debit')
+
+# Optional: Transactions between different entity types
+# Debiting team_wallet1 with 500, moving funds to stock_wallet1
+Transaction.create!(amount: 500.00, source_wallet: team_wallet1, target_wallet: nil, type: 'Debit')
+
+# Crediting team_wallet2 with 400 without a specific source (e.g., external deposit)
+Transaction.create!(amount: 400.00, target_wallet: team_wallet2, source_wallet: nil, type: 'Credit')
+
+puts "Seeding completed!"

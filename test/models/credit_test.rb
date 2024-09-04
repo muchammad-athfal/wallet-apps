@@ -1,6 +1,6 @@
 require "test_helper"
 
-class Api::V1::StocksControllerTest < ActionDispatch::IntegrationTest
+class CreditTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
